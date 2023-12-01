@@ -1,6 +1,7 @@
-use std::{fs::create_dir, path::PathBuf, time::Instant};
+use std::{env, fs::create_dir, path::PathBuf, time::Instant};
 
 use clap::Parser;
+use dotenv::dotenv;
 
 mod loader;
 
@@ -16,7 +17,7 @@ static ADVENTOFCODE_SOLVE_FUNCTIONS: AdventOfCodeSolveFunctions =
 #[command(author, version, about, long_about = None)]
 struct Args {
     #[arg(short, long)]
-    session_token: String,
+    session_token: Option<String>,
     #[arg(short, long, default_value_t = 1)]
     puzzle_part: u8,
     #[arg(value_name = "puzzle")]
@@ -24,6 +25,7 @@ struct Args {
 }
 
 fn main() {
+    dotenv().ok();
     let args = Args::parse();
 
     let cache_path = PathBuf::from(".cache");
@@ -31,9 +33,10 @@ fn main() {
         create_dir(cache_path.clone()).unwrap();
     }
 
-    let session = loader::Session {
-        session_token: args.session_token,
-    };
+    let session_token = args.session_token.unwrap_or_else(|| {
+        env::var("SESSION_TOKEN").expect("No session token argument or environment variable given")
+    });
+    let session = loader::Session { session_token };
     let cache = loader::Cache::new(cache_path, session);
     for function in ADVENTOFCODE_SOLVE_FUNCTIONS.iter() {
         if function.0 == args.puzzle {
