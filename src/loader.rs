@@ -1,20 +1,21 @@
-use std::{path::PathBuf, fs::{File, self}, io::Write};
+use std::{
+    fs::{self, File},
+    io::Write,
+    path::PathBuf,
+};
 
 pub struct Cache {
     pub path: PathBuf,
-    pub session: Session
+    pub session: Session,
 }
 
 pub struct Session {
-    pub session_token: String
+    pub session_token: String,
 }
 
 impl Cache {
     pub fn new(path: PathBuf, session: Session) -> Self {
-        Self {
-            path,
-            session
-        }
+        Self { path, session }
     }
 
     fn add(&self, key: &str, content: String) {
@@ -22,7 +23,7 @@ impl Cache {
         file.write_all(content.as_bytes()).unwrap();
     }
 
-    fn get(&self, key: &str) -> Option<String>{
+    fn get(&self, key: &str) -> Option<String> {
         let filename = String::from(key) + ".txt";
         let path = self.path.join(filename.clone());
         if path.exists() {
