@@ -6,12 +6,15 @@ use dotenv::dotenv;
 mod loader;
 
 mod one;
+mod second;
 
 type AdventOfCodeSolveFunctions =
     &'static [(&'static str, fn(String) -> String, fn(String) -> String)];
 
-static ADVENTOFCODE_SOLVE_FUNCTIONS: AdventOfCodeSolveFunctions =
-    &[("1", one::solve_first, one::solve_second)];
+static ADVENTOFCODE_SOLVE_FUNCTIONS: AdventOfCodeSolveFunctions = &[
+    ("1", one::solve_first, one::solve_second),
+    ("2", second::solve_first, second::solve_second),
+];
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
